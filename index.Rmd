@@ -1,0 +1,71 @@
+---
+title: ""
+output: 
+  html_clean:
+    lightbox: true
+    theme: flatly
+---
+
+
+```{r setup, echo=FALSE, cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=FALSE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+
+
+```
+
+<br>
+<br>
+
+## Your Optimum EPD Solution
+
+```{r, echo = FALSE, out.width="130%"}
+include_graphics("figures/POlogo.png", dpi = 400)
+```
+
+Last updated: `r Sys.Date()`
+
+**There are `r length(registryList$Company)` registrants. Please select the registrant profile that you wish to review: **
+
+```{r createList,echo=FALSE,cache=FALSE}
+library(DT)
+img_uri <- function(x) { sprintf('<img src="%s"/>', knitr::image_uri(x)) }
+htmlLink = img_uri("figures/html.png")
+
+registryList$file <- paste0("<a href=EPDs/",registryList$file,">", "HTML", "</a>")
+
+registryList %>%
+  datatable(extensions = 'Buttons',
+            options = list(dom = 'Blfrtip',
+                           buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                           lengthMenu = list(c(10,25,50,-1),
+                                             c(10,25,50,"All")),
+                           autoWidth = TRUE,
+                           columnDefs = list(list(width = '200px', targets = c(1)),
+                                        list(width = '100px', targets = c(2,3)),
+                                        list(width = '50px', targets = c(4:6))),
+                           initComplete = JS("
+                        function(settings, json) {
+                          $(this.api().table().header()).css({
+                          'font-size': '12px',
+                          });
+                        }
+                        ")
+                  ),escape = FALSE) %>%
+                    formatStyle(columns = colnames(.$x$data), `font-size` = "9px")
+                            
+
+
+
+```
